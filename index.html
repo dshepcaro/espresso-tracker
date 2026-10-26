@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Espresso Bean Tracker</title>
+    <title>Espresso Journal</title>
     
     <!-- iOS / Apple PWA Meta Tags -->
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <meta name="apple-mobile-web-app-title" content="EspressoLog">
+    <meta name="apple-mobile-web-app-title" content="Espresso">
     <meta name="theme-color" content="#fdf8f6">
     
     <script src="https://cdn.tailwindcss.com"></script>
@@ -160,7 +160,7 @@
                     <h1 class="text-xl font-serif text-coffee-900 leading-none">Espresso Journal</h1>
                     <p class="text-[11px] text-coffee-500 font-medium flex items-center gap-1.5 mt-1">
                         <span id="cloudStatusDot" class="inline-block w-2 h-2 rounded-full bg-emerald-500"></span>
-                        <span id="cloudStatusText">Cloud Synced</span>
+                        <span id="cloudStatusText">Saved on Device</span>
                     </p>
                 </div>
             </div>
@@ -168,7 +168,7 @@
                 <button onclick="app.openSettingsModal()" class="text-coffee-600 hover:text-coffee-900 w-10 h-10 rounded-xl hover:bg-coffee-50 active:bg-coffee-100 flex items-center justify-center transition-colors" title="iOS & AI Settings">
                     <i class="fa-solid fa-sliders text-base"></i>
                 </button>
-                <button onclick="app.switchTab('add')" class="bg-coffee-800 text-white px-3.5 py-2 rounded-xl text-xs font-semibold flex items-center gap-1.5 shadow-md shadow-coffee-800/20 hover:bg-coffee-900 active:scale-95 transition-all">
+                <button onclick="app.startNewBeanEntry()" class="bg-coffee-800 text-white px-3.5 py-2 rounded-xl text-xs font-semibold flex items-center gap-1.5 shadow-md shadow-coffee-800/20 hover:bg-coffee-900 active:scale-95 transition-all">
                     <i class="fa-solid fa-camera"></i>
                     <span>Log Bean</span>
                 </button>
@@ -216,7 +216,7 @@
                 <h3 class="font-serif text-xl text-coffee-900 mb-1">Your Espresso Journal is Empty</h3>
                 <p class="text-sm text-coffee-600 mb-6 max-w-xs mx-auto">Snap a picture of your coffee bag and our AI will automatically fill in the roaster, origin, and tasting notes.</p>
                 <div class="flex flex-col sm:flex-row gap-2.5 justify-center">
-                    <button onclick="app.switchTab('add')" class="bg-coffee-800 text-white px-6 py-3.5 rounded-xl text-sm font-semibold shadow-lg shadow-coffee-800/20 hover:bg-coffee-900 active:scale-95 transition-all">
+                    <button onclick="app.startNewBeanEntry()" class="bg-coffee-800 text-white px-6 py-3.5 rounded-xl text-sm font-semibold shadow-lg shadow-coffee-800/20 hover:bg-coffee-900 active:scale-95 transition-all">
                         <i class="fa-solid fa-camera mr-1.5"></i> Log First Bean
                     </button>
                     <button onclick="app.loadSampleBeans()" class="bg-white text-coffee-700 border border-coffee-200 px-5 py-3.5 rounded-xl text-sm font-semibold hover:bg-coffee-50 active:scale-95 transition-all">
@@ -234,7 +234,7 @@
             <div class="flex items-center justify-between border-b border-coffee-100 pb-3">
                 <div>
                     <h2 id="formTitle" class="text-xl font-serif text-coffee-900">Log New Bean</h2>
-                    <p class="text-xs text-coffee-500">Snap a bag photo to auto-fill with AI</p>
+                    <p id="formSubtitle" class="text-xs text-coffee-500">Snap a bag photo to auto-fill with AI</p>
                 </div>
                 <button type="button" onclick="app.resetForm()" class="text-xs text-coffee-500 hover:text-coffee-800 font-medium px-2.5 py-1.5 rounded-lg hover:bg-coffee-50">
                     Reset
@@ -243,7 +243,7 @@
 
             <form id="beanForm" onsubmit="app.saveBean(event)" class="space-y-6">
                 
-                <!-- 1. Bag Photo & Cheap AI Scanner -->
+                <!-- 1. Bag Photo & AI Scanner -->
                 <div class="space-y-2">
                     <div class="flex justify-between items-center">
                         <label class="text-xs font-bold text-coffee-600 uppercase tracking-wider">1. Bag Photo & AI Scan</label>
@@ -272,7 +272,6 @@
                         </div>
                     </div>
 
-                    <!-- Note: Omitting capture="environment" allows iOS Safari to present both "Take Photo" and "Photo Library" -->
                     <input type="file" id="cameraInput" accept="image/*" class="hidden" onchange="app.handleImageUpload(event)">
 
                     <div id="rescanContainer" class="hidden flex justify-end gap-2 pt-1">
@@ -291,7 +290,7 @@
                     
                     <div>
                         <label for="roasterName" class="block text-xs font-semibold text-coffee-700 mb-1">Roaster Name *</label>
-                        <input type="text" id="roasterName" required placeholder="e.g., Elixr Coffee Roasters, Onyx, La Colombe" class="w-full bg-white border border-coffee-200 rounded-xl px-3.5 py-2.5 text-coffee-900 placeholder-coffee-300 focus:outline-none focus:ring-2 focus:ring-coffee-600">
+                        <input type="text" id="roasterName" required placeholder="e.g., Elixr Coffee Roasters, Onyx, Vibrant" class="w-full bg-white border border-coffee-200 rounded-xl px-3.5 py-2.5 text-coffee-900 placeholder-coffee-300 focus:outline-none focus:ring-2 focus:ring-coffee-600">
                     </div>
 
                     <div>
@@ -404,7 +403,7 @@
                 <!-- Submit Button -->
                 <button type="submit" id="submitBtn" class="w-full bg-coffee-800 text-white py-4 rounded-2xl font-bold text-base shadow-lg shadow-coffee-800/25 hover:bg-coffee-900 active:scale-[0.99] transition-all flex items-center justify-center gap-2">
                     <i class="fa-solid fa-check"></i>
-                    <span>Save Bean to Journal</span>
+                    <span id="submitBtnText">Save Bean to Journal</span>
                 </button>
             </form>
         </main>
@@ -422,14 +421,14 @@
                     <h3 class="text-xs font-bold text-coffee-600 uppercase tracking-wider flex items-center gap-1.5">
                         <i class="fa-solid fa-trophy text-amber-500"></i> Highest Scored Beans
                     </h3>
-                    <span class="text-[11px] text-coffee-400">Ranked by Rating</span>
+                    <span class="text-[11px] text-coffee-400">Tap any bean to view</span>
                 </div>
                 <div id="topBeansLeaderboard" class="space-y-2.5">
                     <!-- Injected via JS -->
                 </div>
             </section>
 
-            <!-- Your Signature Palate Averages -->
+            <!-- Signature Palate Averages -->
             <section class="bg-coffee-50 p-4 rounded-2xl border border-coffee-100 space-y-3">
                 <h3 class="text-xs font-bold text-coffee-600 uppercase tracking-wider">Your Taste Profile (Top Beans Avg)</h3>
                 <div id="palateProfileBars" class="space-y-3">
@@ -465,7 +464,7 @@
                         </span>
                         <h2 class="text-2xl font-serif">Find Local Beans You'll Love</h2>
                         <p class="text-xs text-coffee-200 mt-1 leading-relaxed">
-                            Our AI analyzes your highest-scored espresso beans and searches for real local specialty coffee roasters near you that match your palate.
+                            Our AI analyzes your highest-scored espresso beans and searches for real specialty coffee roasters near you that match your palate.
                         </p>
                     </div>
                 </div>
@@ -503,11 +502,11 @@
         <!-- ==================== BOTTOM NAVIGATION BAR (iOS App Style) ==================== -->
         <nav class="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-xl glass-panel border-t border-coffee-200/80 z-30 safe-bottom px-2 pt-1.5">
             <div class="grid grid-cols-4 gap-1">
-                <button onclick="app.switchTab('dashboard')" id="nav-dashboard" class="nav-btn flex flex-col items-center justify-center py-2 rounded-xl text-coffee-900 font-semibold transition-colors">
+                <button onclick="app.switchTab('dashboard')" id="nav-dashboard" class="nav-btn flex flex-col items-center justify-center py-2 rounded-xl text-coffee-900 font-semibold bg-coffee-50 transition-colors">
                     <i class="fa-solid fa-book-open text-lg mb-0.5"></i>
                     <span class="text-[10px]">Journal</span>
                 </button>
-                <button onclick="app.switchTab('add')" id="nav-add" class="nav-btn flex flex-col items-center justify-center py-2 rounded-xl text-coffee-400 hover:text-coffee-700 transition-colors">
+                <button onclick="app.startNewBeanEntry()" id="nav-add" class="nav-btn flex flex-col items-center justify-center py-2 rounded-xl text-coffee-400 hover:text-coffee-700 transition-colors">
                     <i class="fa-solid fa-camera-retro text-lg mb-0.5"></i>
                     <span class="text-[10px]">Log Bean</span>
                 </button>
@@ -522,7 +521,7 @@
             </div>
         </nav>
 
-        <!-- Custom Confirmation Modal (Replaces native confirm() which breaks on mobile iframes/webviews) -->
+        <!-- Custom Delete Confirmation Modal -->
         <div id="confirmModal" class="hidden fixed inset-0 bg-coffee-900/60 z-50 flex items-center justify-center p-4 backdrop-blur-xs">
             <div class="bg-white rounded-2xl w-full max-w-xs p-5 shadow-2xl text-center space-y-4">
                 <div class="w-12 h-12 rounded-full bg-red-100 text-red-600 flex items-center justify-center mx-auto">
@@ -562,22 +561,42 @@
                     </ol>
                 </div>
 
-                <!-- Optional Custom Gemini API Key (For Standalone Deployment) -->
+                <!-- Custom Gemini API Key -->
                 <div class="space-y-2">
-                    <label class="block text-xs font-bold text-coffee-700 uppercase tracking-wider">Custom Gemini API Key (Optional)</label>
+                    <label class="block text-xs font-bold text-coffee-700 uppercase tracking-wider">Google Gemini API Key</label>
                     <p class="text-[11px] text-coffee-500 leading-relaxed">
-                        Inside this preview, AI works automatically. If you host this HTML file yourself (e.g., on GitHub Pages or Netlify for your phone), paste a free Google AI Studio key here so the cheap Gemini Flash model works anywhere:
+                        Saved securely on your device (`localStorage`). Powers the Bag Vision Scanner and Local Roaster Finder:
                     </p>
                     <input type="password" id="customApiKeyInput" placeholder="AIzaSy..." class="w-full bg-coffee-50 border border-coffee-200 rounded-xl px-3.5 py-2.5 text-sm text-coffee-900 focus:outline-none focus:ring-2 focus:ring-coffee-600">
                 </div>
 
-                <!-- Data Export -->
-                <div class="pt-2 flex gap-2">
-                    <button onclick="app.saveSettings()" class="flex-1 bg-coffee-800 text-white py-3 rounded-xl text-xs font-bold shadow-md">
+                <!-- AI Model Selection -->
+                <div class="space-y-1.5">
+                    <label class="block text-xs font-bold text-coffee-700 uppercase tracking-wider">AI Model</label>
+                    <select id="aiModelSelect" class="w-full bg-coffee-50 border border-coffee-200 rounded-xl px-3 py-2.5 text-sm text-coffee-900 focus:outline-none focus:ring-2 focus:ring-coffee-600">
+                        <option value="gemini-2.5-flash">Gemini 2.5 Flash (Recommended / Highest Free Quota)</option>
+                        <option value="gemini-3-flash-preview">Gemini 3 Flash Preview</option>
+                    </select>
+                </div>
+
+                <!-- Backup & Restore -->
+                <div class="pt-1 space-y-2">
+                    <label class="block text-xs font-bold text-coffee-700 uppercase tracking-wider">Data Backup & Restore</label>
+                    <div class="flex gap-2">
+                        <button type="button" onclick="app.exportDataJson()" class="flex-1 py-2.5 bg-coffee-50 hover:bg-coffee-100 text-coffee-800 border border-coffee-200 rounded-xl text-xs font-semibold flex items-center justify-center gap-1.5">
+                            <i class="fa-solid fa-download"></i> Export Backup
+                        </button>
+                        <button type="button" onclick="document.getElementById('importJsonInput').click()" class="flex-1 py-2.5 bg-coffee-50 hover:bg-coffee-100 text-coffee-800 border border-coffee-200 rounded-xl text-xs font-semibold flex items-center justify-center gap-1.5">
+                            <i class="fa-solid fa-upload"></i> Import Backup
+                        </button>
+                        <input type="file" id="importJsonInput" accept=".json,application/json" class="hidden" onchange="app.importDataJson(event)">
+                    </div>
+                </div>
+
+                <!-- Save Button -->
+                <div class="pt-2">
+                    <button onclick="app.saveSettings()" class="w-full bg-coffee-800 text-white py-3.5 rounded-xl text-xs font-bold shadow-md hover:bg-coffee-900 active:scale-95 transition-all">
                         Save Settings
-                    </button>
-                    <button onclick="app.exportDataJson()" class="px-4 py-3 bg-coffee-50 text-coffee-700 border border-coffee-200 rounded-xl text-xs font-semibold">
-                        <i class="fa-solid fa-download mr-1"></i> Backup JSON
                     </button>
                 </div>
             </div>
@@ -594,7 +613,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, collection, addDoc, onSnapshot, query, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, onSnapshot, query, deleteDoc, doc, setDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         // Environment & Firebase Config
         const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-espresso-app';
@@ -605,7 +624,7 @@
         let auth = null;
         let currentUserId = null;
 
-        // Mobile-friendly Image Compressor (keeps photos crisp & < 250KB for instant mobile uploads)
+        // Mobile-friendly Image Compressor (keeps localStorage fast and lightweight)
         function compressImage(file, maxWidth = 750) {
             return new Promise((resolve, reject) => {
                 const reader = new FileReader();
@@ -634,16 +653,24 @@
             });
         }
 
-        // Exponential backoff wrapper for reliable Gemini calls on mobile networks
-        async function fetchWithRetry(url, options, retries = 3) {
+        // Exponential backoff fetch wrapper
+        async function fetchWithRetry(url, options, retries = 2) {
             for (let i = 0; i < retries; i++) {
                 const response = await fetch(url, options);
                 if (response.ok) return await response.json();
-                if (i < retries - 1) {
+                
+                const errText = await response.text();
+                if (i < retries - 1 && (response.status === 429 || response.status >= 500)) {
                     await new Promise(r => setTimeout(r, 1000 * Math.pow(2, i)));
                 } else {
-                    const errText = await response.text();
-                    throw new Error(`API Error (${response.status}): ${errText}`);
+                    let errMsg = `API Error (${response.status})`;
+                    try {
+                        const parsed = JSON.parse(errText);
+                        if (parsed.error?.message) errMsg = parsed.error.message;
+                    } catch (_) {
+                        errMsg += `: ${errText}`;
+                    }
+                    throw new Error(errMsg);
                 }
             }
         }
@@ -651,12 +678,30 @@
         const app = {
             beans: [],
             currentPhotoData: null,
+            editingBeanId: null,
             activeTab: 'dashboard',
-            customApiKey: '',
+            customApiKey: localStorage.getItem('gemini_api_key') || '',
+            aiModel: localStorage.getItem('gemini_ai_model') || 'gemini-2.5-flash',
             pendingDeleteId: null,
 
             async init() {
                 const loader = document.getElementById('globalLoading');
+                
+                // Load key & preferred model from storage
+                const savedKey = localStorage.getItem('gemini_api_key');
+                if (savedKey) this.customApiKey = savedKey;
+                const savedModel = localStorage.getItem('gemini_ai_model');
+                if (savedModel) this.aiModel = savedModel;
+
+                const savedCity = localStorage.getItem('espresso_user_city');
+                if (savedCity) {
+                    const locInput = document.getElementById('userLocationInput');
+                    if (locInput) locInput.value = savedCity;
+                }
+
+                // Load offline beans from localStorage
+                this.loadLocalBeans();
+
                 try {
                     if (firebaseConfig && Object.keys(firebaseConfig).length > 0) {
                         const firebaseApp = initializeApp(firebaseConfig);
@@ -671,12 +716,12 @@
                         currentUserId = auth.currentUser?.uid;
                         this.setupCloudSync();
                     } else {
-                        this.setOfflineStatus("Session Mode");
+                        this.setOfflineStatus("Saved on Device");
                         this.renderAll();
                     }
                 } catch (error) {
                     console.error("Cloud init fallback:", error);
-                    this.setOfflineStatus("Offline Mode");
+                    this.setOfflineStatus("Saved on Device");
                     this.renderAll();
                 } finally {
                     loader.classList.add('opacity-0');
@@ -684,19 +729,47 @@
                 }
             },
 
+            loadLocalBeans() {
+                try {
+                    const localData = localStorage.getItem('espresso_journal_beans');
+                    if (localData) {
+                        this.beans = JSON.parse(localData);
+                    }
+                } catch (e) {
+                    console.error("Error reading from localStorage:", e);
+                }
+            },
+
+            saveLocalBeans() {
+                try {
+                    localStorage.setItem('espresso_journal_beans', JSON.stringify(this.beans));
+                } catch (e) {
+                    console.error("Error saving to localStorage:", e);
+                }
+            },
+
             setOfflineStatus(label) {
                 const dot = document.getElementById('cloudStatusDot');
                 const text = document.getElementById('cloudStatusText');
-                if (dot) dot.className = "inline-block w-2 h-2 rounded-full bg-amber-500";
+                if (dot) dot.className = "inline-block w-2 h-2 rounded-full bg-emerald-500";
                 if (text) text.textContent = label;
             },
 
             getApiKey() {
-                return this.customApiKey || "";
+                return (this.customApiKey || localStorage.getItem('gemini_api_key') || "").trim();
+            },
+
+            getModelName() {
+                return (this.aiModel || localStorage.getItem('gemini_ai_model') || "gemini-2.5-flash").trim();
             },
 
             setupCloudSync() {
                 if (!currentUserId || !db) return;
+
+                const dot = document.getElementById('cloudStatusDot');
+                const text = document.getElementById('cloudStatusText');
+                if (dot) dot.className = "inline-block w-2 h-2 rounded-full bg-emerald-500";
+                if (text) text.textContent = "Cloud Synced";
 
                 const beansRef = collection(db, 'artifacts', appId, 'users', currentUserId, 'beans');
                 onSnapshot(query(beansRef), (snapshot) => {
@@ -705,10 +778,11 @@
                         ...docSnap.data()
                     }));
                     this.beans.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+                    this.saveLocalBeans();
                     this.renderAll();
                 }, (error) => {
                     console.error("Sync error:", error);
-                    this.setOfflineStatus("Sync Paused");
+                    this.setOfflineStatus("Saved on Device");
                 });
             },
 
@@ -717,6 +791,60 @@
                 this.renderSidebar();
                 this.renderAnalytics();
                 this.renderDiscoverBanner();
+            },
+
+            startNewBeanEntry() {
+                this.resetForm();
+                this.switchTab('add');
+            },
+
+            // Populate form to Edit an existing Bean
+            editBean(id, event) {
+                if (event) event.stopPropagation();
+                const bean = this.beans.find(b => b.id === id);
+                if (!bean) return;
+
+                this.editingBeanId = bean.id;
+                document.getElementById('formTitle').textContent = "Edit Bean Entry";
+                document.getElementById('formSubtitle').textContent = `Updating ${bean.beanName}`;
+                document.getElementById('submitBtnText').textContent = "Update Bean Entry";
+
+                document.getElementById('roasterName').value = bean.roasterName || '';
+                document.getElementById('beanName').value = bean.beanName || '';
+                document.getElementById('roastLevel').value = bean.roastLevel || 'Medium';
+                document.getElementById('processMethod').value = bean.processMethod || 'Blend';
+                
+                const ratingVal = parseFloat(bean.rating || 8.5).toFixed(1);
+                document.getElementById('ratingSlider').value = ratingVal;
+                document.getElementById('ratingDisplay').textContent = ratingVal;
+
+                const acid = bean.profile?.acidity || 3;
+                const body = bean.profile?.body || 4;
+                const sweet = bean.profile?.sweetness || 4;
+                document.getElementById('acidity').value = acid;
+                document.getElementById('acidityVal').textContent = `${acid} / 5`;
+                document.getElementById('body').value = body;
+                document.getElementById('bodyVal').textContent = `${body} / 5`;
+                document.getElementById('sweetness').value = sweet;
+                document.getElementById('sweetnessVal').textContent = `${sweet} / 5`;
+
+                document.getElementById('flavorNotes').value = bean.profile?.notes || '';
+                document.getElementById('boughtFrom').value = bean.boughtFrom || '';
+                document.getElementById('price').value = bean.price || '';
+
+                if (bean.photo && !bean.photo.includes('placehold.co')) {
+                    this.currentPhotoData = bean.photo;
+                    const preview = document.getElementById('imagePreview');
+                    preview.src = bean.photo;
+                    preview.classList.remove('hidden');
+                    document.getElementById('rescanContainer').classList.remove('hidden');
+                } else {
+                    this.currentPhotoData = null;
+                    document.getElementById('imagePreview').classList.add('hidden');
+                    document.getElementById('rescanContainer').classList.add('hidden');
+                }
+
+                this.switchTab('add');
             },
 
             // Tab Navigation
@@ -758,7 +886,10 @@
             },
 
             scrollToBean(id) {
-                this.toggleSidebar();
+                const sidebar = document.getElementById('sidebar');
+                if (!sidebar.classList.contains('-translate-x-full')) {
+                    this.toggleSidebar();
+                }
                 this.switchTab('dashboard');
                 setTimeout(() => {
                     const el = document.getElementById(`bean-card-${id}`);
@@ -779,7 +910,7 @@
                 setTimeout(() => toast.classList.add('opacity-0'), 3200);
             },
 
-            // ==================== 1. UPLOAD PHOTO & CHEAP AI BAG SCANNER ====================
+            // ==================== 1. BAG SCANNER WITH VISION AI ====================
             async handleImageUpload(event) {
                 const file = event.target.files?.[0];
                 if (!file) return;
@@ -791,7 +922,6 @@
                     preview.classList.remove('hidden');
                     document.getElementById('rescanContainer').classList.remove('hidden');
 
-                    // Run cheap Gemini Flash Vision model automatically
                     await this.analyzeImageWithAI(this.currentPhotoData);
                 } catch (err) {
                     console.error("Image upload error:", err);
@@ -800,15 +930,22 @@
             },
 
             async analyzeImageWithAI(dataUrl) {
-                if (!dataUrl) return;
+                if (!dataUrl || !dataUrl.startsWith('data:')) return;
+                const apiKey = this.getApiKey();
+                if (!apiKey) {
+                    this.showToast("Add your free Gemini API key in settings!");
+                    this.openSettingsModal();
+                    return;
+                }
+
                 const loadingIndicator = document.getElementById('aiLoading');
                 loadingIndicator.classList.remove('hidden');
 
                 try {
                     const base64Data = dataUrl.split(',')[1];
                     const mimeType = dataUrl.substring(dataUrl.indexOf(':') + 1, dataUrl.indexOf(';'));
-                    const apiKey = this.getApiKey();
-                    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${apiKey}`;
+                    const model = this.getModelName();
+                    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
 
                     const payload = {
                         contents: [{
@@ -870,12 +1007,12 @@
                         if (filledCount > 0) {
                             this.showToast("AI auto-filled your coffee bag details! ✨");
                         } else {
-                            this.showToast("Photo saved! Please type in the bag details.");
+                            this.showToast("Photo saved! Please enter the details.");
                         }
                     }
                 } catch (error) {
                     console.error("AI Vision scan error:", error);
-                    this.showToast("Photo attached! Enter details below.");
+                    this.showToast(error.message || "Photo attached! Enter details below.");
                 } finally {
                     loadingIndicator.classList.add('hidden');
                 }
@@ -891,18 +1028,25 @@
                     return;
                 }
 
+                const apiKey = this.getApiKey();
+                if (!apiKey) {
+                    this.showToast("Add your free Gemini API key in settings!");
+                    this.openSettingsModal();
+                    return;
+                }
+
                 const originalValue = notesInput.value;
                 notesInput.value = "Polishing your tasting notes...";
                 notesInput.disabled = true;
 
                 try {
-                    const apiKey = this.getApiKey();
-                    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${apiKey}`;
+                    const model = this.getModelName();
+                    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
 
                     const payload = {
                         contents: [{
                             parts: [{
-                                text: `Act as a friendly specialty coffee barista. Rewrite these rough espresso tasting notes into a concise, vivid 1-2 sentence tasting note without inventing unrelated flavors: "${rawNotes}"`
+                                text: `Act as a specialty coffee sommelier. Rewrite these rough espresso tasting notes into a concise, vivid 1-2 sentence tasting note without inventing unrelated flavors: "${rawNotes}"`
                             }]
                         }]
                     };
@@ -946,13 +1090,16 @@
                 submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> <span>Saving...</span>';
                 submitBtn.disabled = true;
 
-                const newBean = {
+                const isEditing = Boolean(this.editingBeanId);
+                const existingBean = isEditing ? this.beans.find(b => b.id === this.editingBeanId) : null;
+
+                const beanPayload = {
                     roasterName: roaster,
                     beanName: bean,
                     roastLevel: document.getElementById('roastLevel').value,
                     processMethod: document.getElementById('processMethod').value || 'Blend',
                     rating: parseFloat(document.getElementById('ratingSlider').value).toFixed(1),
-                    photo: this.currentPhotoData || `https://placehold.co/600x400/4a332a/fdf8f6?text=${encodeURIComponent(bean)}`,
+                    photo: this.currentPhotoData || existingBean?.photo || `https://placehold.co/600x400/4a332a/fdf8f6?text=${encodeURIComponent(bean)}`,
                     boughtFrom: document.getElementById('boughtFrom').value.trim(),
                     price: document.getElementById('price').value,
                     profile: {
@@ -961,29 +1108,47 @@
                         sweetness: parseInt(document.getElementById('sweetness').value, 10) || 4,
                         notes: document.getElementById('flavorNotes').value.trim()
                     },
-                    dateLogged: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
-                    timestamp: Date.now()
+                    dateLogged: existingBean?.dateLogged || new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
+                    timestamp: existingBean?.timestamp || Date.now()
                 };
 
                 try {
                     if (currentUserId && db) {
-                        const beansRef = collection(db, 'artifacts', appId, 'users', currentUserId, 'beans');
-                        await addDoc(beansRef, newBean);
+                        if (isEditing && !String(this.editingBeanId).startsWith('local-')) {
+                            await setDoc(doc(db, 'artifacts', appId, 'users', currentUserId, 'beans', this.editingBeanId), beanPayload);
+                        } else {
+                            await addDoc(collection(db, 'artifacts', appId, 'users', currentUserId, 'beans'), beanPayload);
+                        }
                     } else {
-                        newBean.id = 'local-' + Date.now();
-                        this.beans.unshift(newBean);
+                        if (isEditing) {
+                            const idx = this.beans.findIndex(b => b.id === this.editingBeanId);
+                            if (idx !== -1) {
+                                this.beans[idx] = { ...beanPayload, id: this.editingBeanId };
+                            }
+                        } else {
+                            beanPayload.id = 'local-' + Date.now();
+                            this.beans.unshift(beanPayload);
+                        }
+                        this.saveLocalBeans();
                         this.renderAll();
                     }
 
-                    this.showToast("Saved to your Espresso Journal! ☕");
+                    this.showToast(isEditing ? "Bean updated! ☕" : "Saved to your Espresso Journal! ☕");
                     this.resetForm();
                     this.switchTab('dashboard');
                 } catch (err) {
                     console.error("Save error:", err);
-                    this.showToast("Error saving to cloud, stored in session.");
-                    newBean.id = 'local-' + Date.now();
-                    this.beans.unshift(newBean);
+                    beanPayload.id = this.editingBeanId || ('local-' + Date.now());
+                    if (isEditing) {
+                        const idx = this.beans.findIndex(b => b.id === this.editingBeanId);
+                        if (idx !== -1) this.beans[idx] = beanPayload;
+                    } else {
+                        this.beans.unshift(beanPayload);
+                    }
+                    this.saveLocalBeans();
                     this.renderAll();
+                    this.showToast("Saved locally on your device!");
+                    this.resetForm();
                     this.switchTab('dashboard');
                 } finally {
                     submitBtn.innerHTML = originalBtnHtml;
@@ -1010,20 +1175,29 @@
                 if (!id) return;
 
                 try {
-                    if (currentUserId && db && !String(id).startsWith('local-')) {
+                    if (currentUserId && db && !String(id).startsWith('local-') && !String(id).startsWith('sample-')) {
                         await deleteDoc(doc(db, 'artifacts', appId, 'users', currentUserId, 'beans', id));
                     } else {
                         this.beans = this.beans.filter(b => b.id !== id);
+                        this.saveLocalBeans();
                         this.renderAll();
                     }
                     this.showToast("Bean entry deleted");
                 } catch (err) {
                     console.error("Delete error:", err);
-                    this.showToast("Could not delete entry");
+                    this.beans = this.beans.filter(b => b.id !== id);
+                    this.saveLocalBeans();
+                    this.renderAll();
+                    this.showToast("Bean entry deleted");
                 }
             },
 
             resetForm() {
+                this.editingBeanId = null;
+                document.getElementById('formTitle').textContent = "Log New Bean";
+                document.getElementById('formSubtitle').textContent = "Snap a bag photo to auto-fill with AI";
+                document.getElementById('submitBtnText').textContent = "Save Bean to Journal";
+
                 const form = document.getElementById('beanForm');
                 if (form) form.reset();
                 const preview = document.getElementById('imagePreview');
@@ -1031,6 +1205,9 @@
                     preview.classList.add('hidden');
                     preview.src = '';
                 }
+                const cameraInput = document.getElementById('cameraInput');
+                if (cameraInput) cameraInput.value = '';
+
                 document.getElementById('rescanContainer')?.classList.add('hidden');
                 document.getElementById('ratingDisplay').textContent = "8.5";
                 document.getElementById('ratingSlider').value = 8.5;
@@ -1040,7 +1217,7 @@
                 this.currentPhotoData = null;
             },
 
-            // Load Sample Beans for Quick Testing
+            // Load Sample Beans for Testing
             async loadSampleBeans() {
                 const samples = [
                     {
@@ -1063,7 +1240,7 @@
                         processMethod: "Washed",
                         rating: "9.1",
                         photo: "https://placehold.co/600x400/6f5247/fdf8f6?text=Vibrant+Tonic",
-                        boughtFrom: "Vibrant Bakery & Cafe",
+                        boughtFrom: "Vibrant Rittenhouse",
                         price: "20.50",
                         profile: { acidity: 4, body: 4, sweetness: 4, notes: "Juicy blood orange brightness balanced by milk chocolate and caramel sweetness." },
                         dateLogged: "Oct 21, 2026",
@@ -1092,8 +1269,9 @@
                         }
                     } else {
                         samples.forEach((s, i) => {
-                            this.beans.push({ ...s, id: 'sample-' + i });
+                            this.beans.push({ ...s, id: 'sample-' + Date.now() + '-' + i });
                         });
+                        this.saveLocalBeans();
                         this.renderAll();
                     }
                     this.showToast("Sample espresso beans loaded! ☕");
@@ -1198,18 +1376,20 @@
                         <div class="h-44 w-full relative overflow-hidden bg-coffee-100">
                             <img src="${bean.photo}" onerror="this.src='https://placehold.co/600x400/4a332a/fdf8f6?text=Espresso+Bean'" alt="${bean.beanName}" class="w-full h-full object-cover">
                             
-                            <!-- Always-accessible mobile delete button -->
-                            <button onclick="app.promptDeleteBean('${bean.id}', event)" class="absolute top-3 left-3 bg-black/50 hover:bg-red-600 text-white w-8 h-8 rounded-full flex items-center justify-center transition-colors z-10 backdrop-blur-xs" aria-label="Delete bean">
-                                <i class="fa-solid fa-trash-can text-xs"></i>
-                            </button>
+                            <div class="absolute top-3 left-3 flex gap-1.5 z-10">
+                                <button onclick="app.editBean('${bean.id}', event)" class="bg-black/50 hover:bg-coffee-800 text-white w-8 h-8 rounded-full flex items-center justify-center transition-colors backdrop-blur-xs" aria-label="Edit bean" title="Edit Bean">
+                                    <i class="fa-solid fa-pen text-xs"></i>
+                                </button>
+                                <button onclick="app.promptDeleteBean('${bean.id}', event)" class="bg-black/50 hover:bg-red-600 text-white w-8 h-8 rounded-full flex items-center justify-center transition-colors backdrop-blur-xs" aria-label="Delete bean" title="Delete Bean">
+                                    <i class="fa-solid fa-trash-can text-xs"></i>
+                                </button>
+                            </div>
 
-                            <!-- Rating Badge -->
                             <div class="absolute top-3 right-3 bg-coffee-900/90 text-white backdrop-blur-xs px-3 py-1 rounded-full text-sm font-bold shadow-md z-10 flex items-center gap-1">
                                 <i class="fa-solid fa-star text-amber-400 text-xs"></i>
                                 <span>${parseFloat(bean.rating).toFixed(1)}</span>
                             </div>
 
-                            <!-- Roast & Process Pill -->
                             <div class="absolute bottom-2.5 left-3 flex gap-1.5">
                                 <span class="bg-white/90 backdrop-blur-xs text-coffee-900 text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-md shadow-2xs">
                                     ${bean.roastLevel || 'Medium'} Roast
@@ -1255,6 +1435,7 @@
 
                             <div class="flex justify-between items-center text-[10px] text-coffee-400 pt-1 border-t border-coffee-50">
                                 <span>Logged ${bean.dateLogged || ''}</span>
+                                <button onclick="app.editBean('${bean.id}', event)" class="text-coffee-600 hover:text-coffee-900 font-semibold">Edit</button>
                             </div>
                         </div>
                     `;
@@ -1307,7 +1488,7 @@
                     </div>
                 `).join('');
 
-                // 2. Signature Palate Bars (averaged across top 3 beans)
+                // 2. Signature Palate Bars
                 const topSlice = ranked.slice(0, 3);
                 const avgAcid = (topSlice.reduce((s, b) => s + (b.profile?.acidity || 3), 0) / topSlice.length).toFixed(1);
                 const avgBody = (topSlice.reduce((s, b) => s + (b.profile?.body || 3), 0) / topSlice.length).toFixed(1);
@@ -1347,7 +1528,7 @@
                     `;
                 }).join('');
 
-                // 4. Quick Insights (Avg Price & Favorite Roaster)
+                // 4. Quick Insights
                 const pricedBeans = this.beans.filter(b => b.price && !isNaN(parseFloat(b.price)));
                 const avgPrice = pricedBeans.length > 0
                     ? '$' + (pricedBeans.reduce((s, b) => s + parseFloat(b.price), 0) / pricedBeans.length).toFixed(2)
@@ -1369,33 +1550,52 @@
                 `;
             },
 
-            // ==================== 6. LOCAL ROASTER AI RECOMMENDATIONS (WITH GOOGLE SEARCH) ====================
+            // ==================== 6. LOCAL ROASTER AI (WITH AUTOMATIC FALLBACK) ====================
             renderDiscoverBanner() {
                 const banner = document.getElementById('tasteContextBanner');
                 if (!banner) return;
 
                 if (this.beans.length === 0) {
-                    banner.innerHTML = `<i class="fa-solid fa-circle-info text-amber-600 mr-1"></i> You haven't logged any beans yet—log a bean or load sample beans so AI can tailor local recommendations to your palate!`;
+                    banner.innerHTML = `<i class="fa-solid fa-circle-info text-amber-600 mr-1"></i> Log a bean or load sample beans on the Journal tab so AI can tailor recommendations to your favorite flavor profiles!`;
                     return;
                 }
 
                 const topBeans = [...this.beans].sort((a, b) => parseFloat(b.rating) - parseFloat(a.rating)).slice(0, 2);
                 const names = topBeans.map(b => `<strong>${b.beanName}</strong> (${b.roasterName}, ${b.rating}★)`).join(' & ');
-                banner.innerHTML = `<i class="fa-solid fa-heart text-amber-600 mr-1.5"></i> Matching local roasters to your favorites: ${names}`;
+                banner.innerHTML = `<i class="fa-solid fa-heart text-amber-600 mr-1.5"></i> Tailoring local roasters to your favorites: ${names}`;
             },
 
             async getLocalRecommendations() {
                 const locationInput = document.getElementById('userLocationInput').value.trim() || 'Philadelphia, PA';
+                localStorage.setItem('espresso_user_city', locationInput);
+
                 const container = document.getElementById('localRecsContainer');
                 const btn = document.getElementById('discoverBtn');
+
+                const apiKey = this.getApiKey();
+                if (!apiKey) {
+                    container.innerHTML = `
+                        <div class="bg-amber-50 border border-amber-200 rounded-2xl p-5 text-center space-y-2.5">
+                            <i class="fa-solid fa-key text-amber-700 text-2xl"></i>
+                            <h4 class="font-serif text-sm font-bold text-amber-900">Gemini API Key Needed</h4>
+                            <p class="text-xs text-amber-700 leading-relaxed">
+                                To run local roaster searches on your phone, paste your free Gemini API key in Settings.
+                            </p>
+                            <button onclick="app.openSettingsModal()" class="bg-coffee-800 text-white text-xs font-bold px-4 py-2 rounded-xl">
+                                Open Settings
+                            </button>
+                        </div>
+                    `;
+                    return;
+                }
 
                 const topBeans = [...this.beans]
                     .sort((a, b) => parseFloat(b.rating) - parseFloat(a.rating))
                     .slice(0, 3);
 
                 const tasteSummary = topBeans.length > 0
-                    ? topBeans.map(b => `${b.beanName} by ${b.roasterName} (${b.roastLevel} roast, Score ${b.rating}/10, Notes: ${b.profile?.notes || 'balanced espresso'})`).join('; ')
-                    : 'Medium roast espresso blends with chocolate, caramel, and balanced fruit notes';
+                    ? topBeans.map(b => `${b.beanName} by ${b.roasterName} (${b.roastLevel} roast, Rating ${b.rating}/10, Notes: ${b.profile?.notes || 'balanced espresso'})`).join('; ')
+                    : 'Medium roast espresso blends with chocolate, caramel, and balanced sweetness';
 
                 btn.disabled = true;
                 const origBtnHtml = btn.innerHTML;
@@ -1405,102 +1605,132 @@
                     <div class="bg-coffee-50 border border-coffee-100 rounded-2xl p-8 text-center space-y-3">
                         <i class="fa-solid fa-compass fa-spin text-3xl text-coffee-800"></i>
                         <h4 class="font-serif text-lg text-coffee-900">Scouting ${locationInput} Roasters...</h4>
-                        <p class="text-xs text-coffee-500">Matching local specialty coffee bags to your highest-rated espresso profiles.</p>
+                        <p class="text-xs text-coffee-500">Finding real specialty coffee roasters near ${locationInput} that match your palate.</p>
                     </div>
                 `;
 
+                const model = this.getModelName();
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
+
+                const promptText = `You are a specialty coffee curator.
+My highest rated espresso beans are: ${tasteSummary}.
+Recommend 3 real, well-known specialty coffee roasters located in or around ${locationInput}, and suggest a specific whole-bean espresso blend or single-origin bag from each that matches my flavor profile.
+
+CRITICAL INSTRUCTION: Output ONLY a valid JSON array of 3 objects with NO markdown formatting, NO backticks, and NO extra text.
+[
+  {
+    "roasterName": "Name of Local Roaster",
+    "beanRecommendation": "Specific blend or origin name",
+    "neighborhood": "Neighborhood or area in ${locationInput}",
+    "whyItMatches": "1-2 sentences explaining why this fits my taste preferences",
+    "flavorProfile": "Key flavor notes"
+  }
+]`;
+
                 try {
-                    const apiKey = this.getApiKey();
-                    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${apiKey}`;
-
-                    const payload = {
-                        contents: [{
-                            parts: [{
-                                text: `My favorite espresso beans are: ${tasteSummary}. Search for real, well-regarded local specialty coffee roasters in or near ${locationInput}. Recommend 3 specific coffee bags or espresso blends from local roasters in ${locationInput} that match my taste profile. Format the response strictly as a JSON array of objects with keys: "roasterName", "beanRecommendation", "neighborhood", "whyItMatches", and "flavorProfile".`
-                            }]
-                        }],
-                        tools: [{ "google_search": {} }],
-                        generationConfig: {
-                            responseMimeType: "application/json",
-                            responseSchema: {
-                                type: "ARRAY",
-                                items: {
-                                    type: "OBJECT",
-                                    properties: {
-                                        roasterName: { type: "STRING" },
-                                        beanRecommendation: { type: "STRING" },
-                                        neighborhood: { type: "STRING" },
-                                        whyItMatches: { type: "STRING" },
-                                        flavorProfile: { type: "STRING" }
-                                    },
-                                    propertyOrdering: ["roasterName", "beanRecommendation", "neighborhood", "whyItMatches", "flavorProfile"]
-                                }
-                            }
-                        }
-                    };
-
-                    const result = await fetchWithRetry(apiUrl, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(payload)
-                    });
+                    let result = null;
+                    // First attempt: Try with Google Search Grounding enabled
+                    try {
+                        result = await fetchWithRetry(apiUrl, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                contents: [{ parts: [{ text: promptText }] }],
+                                tools: [{ "googleSearch": {} }]
+                            })
+                        }, 1);
+                    } catch (searchToolErr) {
+                        console.warn("Search grounding unavailable on this tier, falling back to structured model generation:", searchToolErr);
+                        // Automatic Fallback: Structured JSON mode without search tool if key tier restricts grounding
+                        result = await fetchWithRetry(apiUrl, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                contents: [{ parts: [{ text: promptText }] }],
+                                generationConfig: { responseMimeType: "application/json" }
+                            })
+                        }, 2);
+                    }
 
                     const candidate = result?.candidates?.[0];
-                    const text = candidate?.content?.parts?.[0]?.text;
+                    // Concatenate all text parts safely
+                    let rawText = (candidate?.content?.parts || [])
+                        .map(p => p.text || '')
+                        .join('\n')
+                        .trim();
 
-                    // Extract grounding web links if available
+                    // Extract grounding citations if available
                     let sources = [];
-                    const attributions = candidate?.groundingMetadata?.groundingAttributions;
-                    if (attributions) {
-                        sources = attributions
-                            .map(a => ({ uri: a.web?.uri, title: a.web?.title }))
-                            .filter(s => s.uri && s.title);
+                    const attributions = candidate?.groundingMetadata?.groundingAttributions || candidate?.groundingMetadata?.groundingChunks;
+                    if (Array.isArray(attributions)) {
+                        attributions.forEach(a => {
+                            const uri = a.web?.uri || a.uri;
+                            const title = a.web?.title || a.title;
+                            if (uri && title) sources.push({ uri, title });
+                        });
                     }
 
-                    if (text) {
-                        const recs = JSON.parse(text);
-                        let html = recs.map(r => `
-                            <div class="bg-white border border-coffee-100 rounded-2xl p-4 shadow-xs space-y-2">
-                                <div class="flex justify-between items-start gap-2">
-                                    <div>
-                                        <span class="text-[10px] font-bold uppercase tracking-wider text-amber-700 bg-amber-50 px-2 py-0.5 rounded-md">
-                                            <i class="fa-solid fa-Store mr-1"></i>${r.roasterName}
-                                        </span>
-                                        <h4 class="text-base font-serif font-bold text-coffee-900 mt-1">${r.beanRecommendation}</h4>
-                                    </div>
-                                    <span class="text-[11px] text-coffee-500 font-medium flex items-center gap-1 flex-shrink-0">
-                                        <i class="fa-solid fa-location-dot text-coffee-400"></i> ${r.neighborhood || locationInput}
+                    const jsonMatch = rawText.match(/\[[\s\S]*\]/);
+                    if (!jsonMatch) {
+                        throw new Error("Unexpected response format. Please tap Try Again.");
+                    }
+
+                    const recs = JSON.parse(jsonMatch[0]);
+                    let html = recs.map(r => {
+                        const mapsQuery = encodeURIComponent(`${r.roasterName} ${r.neighborhood || locationInput}`);
+                        return `
+                        <div class="bg-white border border-coffee-100 rounded-2xl p-4 shadow-xs space-y-2.5">
+                            <div class="flex justify-between items-start gap-2">
+                                <div>
+                                    <span class="text-[10px] font-bold uppercase tracking-wider text-amber-700 bg-amber-50 px-2 py-0.5 rounded-md">
+                                        <i class="fa-solid fa-store mr-1"></i>${r.roasterName}
                                     </span>
+                                    <h4 class="text-base font-serif font-bold text-coffee-900 mt-1">${r.beanRecommendation}</h4>
                                 </div>
-                                <p class="text-xs text-coffee-700 leading-relaxed">${r.whyItMatches}</p>
-                                <div class="pt-1 flex items-center justify-between text-[11px] text-coffee-500 border-t border-coffee-50">
-                                    <span><strong>Notes:</strong> ${r.flavorProfile}</span>
-                                </div>
-                            </div>
-                        `).join('');
-
-                        if (sources.length > 0) {
-                            const sourceLinks = sources.slice(0, 3).map(s => `
-                                <a href="${s.uri}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 text-[11px] text-coffee-700 bg-coffee-50 hover:bg-coffee-100 px-2.5 py-1 rounded-lg border border-coffee-200 truncate max-w-[200px]">
-                                    <i class="fa-solid fa-arrow-up-right-from-square text-[9px]"></i> ${s.title}
+                                <a href="https://www.google.com/maps/search/?api=1&query=${mapsQuery}" target="_blank" rel="noopener noreferrer" class="text-[11px] text-coffee-600 hover:text-coffee-900 bg-coffee-50 px-2.5 py-1 rounded-lg font-medium flex items-center gap-1 flex-shrink-0 border border-coffee-100">
+                                    <i class="fa-solid fa-location-dot text-amber-600"></i> ${r.neighborhood || locationInput}
                                 </a>
-                            `).join('');
-                            html += `
-                                <div class="pt-2">
-                                    <p class="text-[10px] font-bold uppercase tracking-wider text-coffee-400 mb-1.5">Verified Local Web Sources</p>
-                                    <div class="flex flex-wrap gap-1.5">${sourceLinks}</div>
-                                </div>
-                            `;
-                        }
+                            </div>
+                            <p class="text-xs text-coffee-700 leading-relaxed">${r.whyItMatches}</p>
+                            <div class="pt-1.5 flex items-center justify-between text-[11px] text-coffee-500 border-t border-coffee-50">
+                                <span><strong>Notes:</strong> ${r.flavorProfile}</span>
+                                <a href="https://www.google.com/maps/search/?api=1&query=${mapsQuery}" target="_blank" rel="noopener noreferrer" class="text-amber-700 font-semibold hover:underline">
+                                    Open in Maps <i class="fa-solid fa-arrow-up-right-from-square text-[9px] ml-0.5"></i>
+                                </a>
+                            </div>
+                        </div>
+                    `}).join('');
 
-                        container.innerHTML = html;
+                    if (sources.length > 0) {
+                        const uniqueSources = [];
+                        const seen = new Set();
+                        for (const s of sources) {
+                            if (!seen.has(s.uri)) {
+                                seen.add(s.uri);
+                                uniqueSources.push(s);
+                            }
+                        }
+                        const sourceLinks = uniqueSources.slice(0, 3).map(s => `
+                            <a href="${s.uri}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 text-[11px] text-coffee-700 bg-coffee-50 hover:bg-coffee-100 px-2.5 py-1 rounded-lg border border-coffee-200 truncate max-w-[200px]">
+                                <i class="fa-solid fa-arrow-up-right-from-square text-[9px]"></i> ${s.title}
+                            </a>
+                        `).join('');
+                        html += `
+                            <div class="pt-2">
+                                <p class="text-[10px] font-bold uppercase tracking-wider text-coffee-400 mb-1.5">Verified Local Web Sources</p>
+                                <div class="flex flex-wrap gap-1.5">${sourceLinks}</div>
+                            </div>
+                        `;
                     }
+
+                    container.innerHTML = html;
                 } catch (err) {
                     console.error("Local discovery error:", err);
                     container.innerHTML = `
                         <div class="bg-red-50 border border-red-100 rounded-2xl p-5 text-center space-y-2">
                             <p class="text-xs font-semibold text-red-800">Couldn't complete the search right now.</p>
-                            <p class="text-[11px] text-red-600">If you are hosting this app outside Canvas, open the top-right Settings icon and add a free Gemini API Key.</p>
+                            <p class="text-[11px] text-red-600">${err.message || 'Please check your API key in Settings and try again.'}</p>
+                            <button onclick="app.getLocalRecommendations()" class="mt-2 text-xs bg-coffee-800 text-white px-3.5 py-1.5 rounded-xl font-semibold">Try Again</button>
                         </div>
                     `;
                 } finally {
@@ -1509,9 +1739,10 @@
                 }
             },
 
-            // ==================== 7. SETTINGS & BACKUP ====================
+            // ==================== 7. SETTINGS, BACKUP & RESTORE ====================
             openSettingsModal() {
-                document.getElementById('customApiKeyInput').value = this.customApiKey;
+                document.getElementById('customApiKeyInput').value = this.getApiKey();
+                document.getElementById('aiModelSelect').value = this.getModelName();
                 document.getElementById('settingsModal').classList.remove('hidden');
             },
 
@@ -1520,9 +1751,14 @@
             },
 
             saveSettings() {
-                this.customApiKey = document.getElementById('customApiKeyInput').value.trim();
+                const keyVal = document.getElementById('customApiKeyInput').value.trim();
+                const modelVal = document.getElementById('aiModelSelect').value;
+                this.customApiKey = keyVal;
+                this.aiModel = modelVal;
+                localStorage.setItem('gemini_api_key', keyVal);
+                localStorage.setItem('gemini_ai_model', modelVal);
                 this.closeSettingsModal();
-                this.showToast("Settings updated!");
+                this.showToast("Settings saved to your iPhone! ✨");
             },
 
             exportDataJson() {
@@ -1534,6 +1770,30 @@
                 dlAnchor.click();
                 dlAnchor.remove();
                 this.showToast("Backup downloaded!");
+            },
+
+            importDataJson(event) {
+                const file = event.target.files?.[0];
+                if (!file) return;
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    try {
+                        const imported = JSON.parse(e.target.result);
+                        if (Array.isArray(imported)) {
+                            this.beans = imported;
+                            this.saveLocalBeans();
+                            this.renderAll();
+                            this.closeSettingsModal();
+                            this.showToast(`Restored ${imported.length} beans! ☕`);
+                        } else {
+                            this.showToast("Invalid backup file format.");
+                        }
+                    } catch (err) {
+                        console.error("Import error:", err);
+                        this.showToast("Could not read backup file.");
+                    }
+                };
+                reader.readAsText(file);
             }
         };
 
